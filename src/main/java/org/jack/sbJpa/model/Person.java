@@ -40,7 +40,9 @@ public class Person {
     private String firstName;
  
     @Column(name = "last_name", nullable = false)
-    private String lastName;@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private String lastName;
+    
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(name = "person_image",
     joinColumns = {@JoinColumn(name= "person_id" , referencedColumnName = "id")},
     inverseJoinColumns = {@JoinColumn(name = "image_id" , referencedColumnName = "id")})
