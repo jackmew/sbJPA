@@ -3,15 +3,20 @@
  */
 package org.jack.sbJpa.controller;
 
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.imageio.ImageIO;
+import javax.servlet.ServletContext;
+
 import org.jack.sbJpa.exception.PersonNotFoundException;
 import org.jack.sbJpa.model.Image;
 import org.jack.sbJpa.model.Person;
-import org.jack.sbJpa.repository.ImageRepository;
 import org.jack.sbJpa.service.RepositoryPersonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -33,47 +38,67 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 public class PersonController {
 	
 	@Autowired
-	RepositoryPersonService rps;
+	private RepositoryPersonService rps;
 	
+	@Autowired
+	private ServletContext servletContext;
+
 	
 	@RequestMapping("/")
-	public void createPerson() {
-		Person person = new Person();
-		person.setFirstName("Ho");
-		person.setLastName("Jack");
-		person.setCreationTime(new Date());
-		person.setModificationTime(new Date());
-		rps.create(person);
+	public @ResponseBody String createPerson() throws IOException {
 		
-		Person person1 = new Person();
-		person1.setFirstName("Meow");
-		person1.setLastName("Mew");
-		person1.setCreationTime(new Date());
-		person1.setModificationTime(new Date());
-		rps.create(person1);
+		String[] fileArr = {"bean_green.jpg","elephant_blue.jpg","rabbit_blue.jpg",
+				"rabbit_red.jpg","smile_raibow.jpg"};
 		
-		Person person2 = new Person();
-		person2.setFirstName("c");
-		person2.setLastName("Chloe");
-		person2.setCreationTime(new Date());
-		person2.setModificationTime(new Date());
-		rps.create(person2);
+		for(String element : fileArr){
+			System.out.println(element);
+			saveInitImage(element);
+		}
+		return "Initialize person completed.";
 		
-		Person person3 = new Person();
-		person3.setFirstName("Ha");
-		person3.setLastName("Cartoon");
-		person3.setCreationTime(new Date());
-		person3.setModificationTime(new Date());
-		rps.create(person3);
-		
-		Person person4 = new Person();
-		person4.setFirstName("Nice");
-		person4.setLastName("Mac");
-		person4.setCreationTime(new Date());
-		person4.setModificationTime(new Date());
-		rps.create(person4);
-		
-		System.out.println("create persons");
+	}
+	public void saveInitImage(String fileName) throws IOException{
+		InputStream inputStream = null;
+		String fName = "/WEB-INF/resources/images/"+fileName;
+		//Otherwise you are splitting on the regex ., which means "any character".
+		String[] namePostfixArr = fileName.split("\\.");
+		String fullName = namePostfixArr[0];
+		String[] nameArr = fullName.split("_");
+		String firstName = nameArr[0];
+		String lastName = nameArr[1];
+		String imageName = firstName+"_pic";
+        try {
+        	
+            inputStream = servletContext.getResourceAsStream(fName);
+            // Prepare buffered image.
+            BufferedImage img = ImageIO.read(inputStream);
+
+            // Create a byte array output stream.
+            ByteArrayOutputStream bao = new ByteArrayOutputStream();
+
+            // Write to output stream
+            ImageIO.write(img, "jpg", bao);
+            
+            byte[] imageByte = bao.toByteArray();
+            
+            Image image = new Image();
+            image.setBytes(imageByte);
+            image.setContentType("image/jpg");
+            image.setFileName(imageName);
+              
+            Person person = new Person();
+            
+            person.setFirstName(firstName);
+            person.setLastName(lastName);
+            person.setImage(image);
+            
+            rps.create(person);
+            
+        } finally {
+            if (inputStream != null) {
+               inputStream.close();
+            }
+        }
 	}
 
 	@RequestMapping("/findAllPerson")
