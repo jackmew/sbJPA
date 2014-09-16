@@ -1,0 +1,77 @@
+<html>
+<head>
+<!-- <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script> -->
+<link type="text/css" rel="stylesheet" href="../css/bootstrap.min.css" />
+<script src="../lib/jquery-1.11.0.js"></script>
+<script src="../lib/bootstrap.min.js"></script>
+<script src="../js/person.js"></script>
+<style>
+
+	.CattoBorderRadius{
+		height:200px;
+	    width:200px;
+		border-radius: 50%;
+	}
+	input[type="file"] {
+        display: block;
+        margin : 0 auto;
+
+    }
+    h1{
+    	padding-top:15px;
+    }
+
+</style>
+</head>
+<body>
+	<nav class="navbar navbar-default" role="navigation">
+	  <div class="container-fluid">
+	    <!-- Brand and toggle get grouped for better mobile display -->
+	    <div class="navbar-header">
+	      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+	        <span class="sr-only">Toggle navigation</span>
+	        <span class="icon-bar"></span>
+	        <span class="icon-bar"></span>
+	        <span class="icon-bar"></span>
+	      </button>
+	      <a class="navbar-brand" href="#">Spring Data Jpa</a>
+	    </div>
+	
+	    <!-- Collect the nav links, forms, and other content for toggling -->
+	    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+	      <ul class="nav navbar-nav">
+	        <li><a href="/views/image/fileUpload.html">image</a></li>
+	        <li class="active"><a href="#">person</a></li>
+	      </ul>
+	    </div><!-- /.navbar-collapse -->
+	  </div><!-- /.container-fluid -->
+	</nav>
+
+
+	<div id="saveDiv" style="text-align:center ;width:100% ; height:250px;background-color:lightblue;">
+		<h1>Create New Person :</h1>
+		<div>	
+			<span> firstName:</span>  <input type="text" name="firstName"/>
+			<br /> <br />
+			<span> lastName:</span>  <input type="text" name="lastName"/>
+			<br /> 
+			
+			pic: <input type="file" name="file"/>
+			<button id="btnSubmit">submit</button> 
+		</div>
+	</div>
+	<div id="findDiv" style=" text-align:center;background-color:lightgreen; ">
+		<h1>Find Person</h1>
+		<div>
+			<button id="btnFindAll">FindAll</button> 
+			<button id="btnSubmit">submit</button> 
+			<button id="btnSubmit">submit</button> 
+			<button id="btnSubmit">submit</button> 
+		</div>
+		
+		<div id="showPerson" class="row">
+		
+		</div>
+	</div>
+</body>
+</html>
