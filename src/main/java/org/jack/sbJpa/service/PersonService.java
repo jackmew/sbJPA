@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.jack.sbJpa.exception.PersonNotFoundException;
 import org.jack.sbJpa.model.Person;
+import org.springframework.data.domain.Page;
 
 /**
  * @author jackho
@@ -45,4 +46,6 @@ public interface PersonService {
 	
 	
 	public List<Person> findByCreationTimeBefore(Date date);
+	
+	public Page<Person> findPersonPage(int pageNumber);
 }

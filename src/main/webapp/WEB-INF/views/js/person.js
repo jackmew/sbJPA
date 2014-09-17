@@ -35,6 +35,7 @@ $(document).ready(function(){
 	$("#btnFindByCreationTimeBefore").on("click",findByCreationTimeBeforeClick);
 	$("#btnUpdate").on("click",updateClick);
 	$("#btnDelete").on("click",deleteClick);
+	$("#btnFindPersonPage").on("click",findPersonPageClick);
 });
 
 function submitClick(formData){
@@ -245,6 +246,30 @@ function deleteClick(){
 		},
 		success: function(dto){
 			alert(dto);
+		},
+		error: function(xhr,status){
+			alert("error");
+		}
+	});
+}
+
+function findPersonPageClick(){
+	$("div[name='showPersonDiv']").remove();
+	
+	var pageNumber = $("#pageNumberText").val();
+	
+	$.ajax({
+		url: '/person/findPersonPage',
+		type: 'GET',
+		data: {
+			pageNumber:pageNumber
+		},
+		success: function(dto){
+			var personArr = dto.content;
+			console.log(personArr);
+			$.each(personArr , function(index,value){
+				showPerson(value);
+			});
 		},
 		error: function(xhr,status){
 			alert("error");

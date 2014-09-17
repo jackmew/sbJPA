@@ -20,6 +20,7 @@ import org.jack.sbJpa.model.Image;
 import org.jack.sbJpa.model.Person;
 import org.jack.sbJpa.service.RepositoryPersonService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -140,6 +141,13 @@ public class PersonController {
 	public ResponseEntity<List<Person>> findByCreationTimeBefore(){
 		List<Person> persons = rps.findByCreationTimeBefore(new Date());
 		return new ResponseEntity<List<Person>>(persons,HttpStatus.OK);
+	}
+	
+	@RequestMapping("/findPersonPage")
+	public ResponseEntity<Page<Person>> findPersonPage(@RequestParam(value="pageNumber" , required=true)int pageNumber){
+		Page<Person> persons = rps.findPersonPage(pageNumber);
+		
+		return new ResponseEntity<Page<Person>>(persons,HttpStatus.OK);
 	}
 
 	@RequestMapping("/update")

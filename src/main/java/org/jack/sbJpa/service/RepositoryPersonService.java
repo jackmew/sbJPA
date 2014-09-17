@@ -10,6 +10,9 @@ import org.jack.sbJpa.exception.PersonNotFoundException;
 import org.jack.sbJpa.model.Person;
 import org.jack.sbJpa.repository.PersonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 
@@ -19,6 +22,8 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class RepositoryPersonService implements PersonService{
+	
+	private static final int PAGE_SIZE = 2;
 
 	@Autowired
 	private PersonRepository personRepository;
@@ -85,6 +90,12 @@ public class RepositoryPersonService implements PersonService{
 	@Override
 	public List<Person> findByCreationTimeBefore(Date date) {
 		return personRepository.findByCreationTimeBefore(date);
+	}
+	
+	@Override
+	public Page<Person> findPersonPage(int pageNumber){
+		PageRequest pageRequest = new PageRequest(pageNumber , PAGE_SIZE , Sort.Direction.DESC , "firstName");
+		return personRepository.findAll(pageRequest);//1.return List<T> 2.return Page<Person>
 	}
 	
 	/* @Query Annotation 
