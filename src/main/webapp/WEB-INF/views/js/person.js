@@ -28,6 +28,13 @@ $(document).ready(function(){
 	});
 	
 	$("#btnFindAll").on("click",findAllClick);
+	$("#btnFindOne").on("click",findOneClick);
+	$("#btnFindByFirstName").on("click",findByFirstNameClick);
+	$("#btnFindByLastName").on("click",findByLastNameClick);
+	$("#btnFindByLastNameStartingWith").on("click",findByLastNameStartingWithClick);
+	$("#btnFindByCreationTimeBefore").on("click",findByCreationTimeBeforeClick);
+	$("#btnUpdate").on("click",updateClick);
+	$("#btnDelete").on("click",deleteClick);
 });
 
 function submitClick(formData){
@@ -81,3 +88,186 @@ function showPerson(personWithImage){
 							  	'<h2>'+fullName+'</h2>'+
 							'</div>');
 }
+
+function findOneClick() {
+	
+	$("div[name='showPersonDiv']").remove();
+	
+	var personId = $("#findOneText").val();
+	
+	$.ajax({
+		url: '/person/findOne',
+		type: 'GET',
+		data: {
+			id:personId
+		},
+		success: function(dto){
+			showPerson(dto);
+		},
+		error: function(xhr,status){
+			alert("error");
+		}
+	});
+}
+
+function findByFirstNameClick() {
+	
+	$("div[name='showPersonDiv']").remove();
+	
+	var firstName = $("#firstNameText").val();
+	
+	$.ajax({
+		url: '/person/findByFirstName',
+		type: 'GET',
+		data: {
+			firstName:firstName
+		},
+		success: function(dtoArr){
+			$.each(dtoArr,function(index,value){
+				showPerson(value);
+			});
+			
+		},
+		error: function(xhr,status){
+			alert("error");
+		}
+	});
+}
+function findByLastNameClick() {
+	
+	$("div[name='showPersonDiv']").remove();
+	
+	var lastName = $("#lastNameText").val();
+	
+	$.ajax({
+		url: '/person/findByLastName',
+		type: 'GET',
+		data: {
+			lastName:lastName
+		},
+		success: function(dtoArr){
+			$.each(dtoArr,function(index,value){
+				showPerson(value);
+			});
+			
+		},
+		error: function(xhr,status){
+			alert("error");
+		}
+	});
+}
+function findByLastNameStartingWithClick(){
+	
+	$("div[name='showPersonDiv']").remove();
+	
+	var lastName = $("#lastNameStartingWithText").val();
+	
+	$.ajax({
+		url: '/person/findByLastNameStartingWith',
+		type: 'GET',
+		data: {
+			lastName:lastName
+		},
+		success: function(dtoArr){
+			$.each(dtoArr,function(index,value){
+				showPerson(value);
+			});
+			
+		},
+		error: function(xhr,status){
+			alert("error");
+		}
+	});
+}
+
+function findByCreationTimeBeforeClick(){
+	
+	$("div[name='showPersonDiv']").remove();
+
+	$.ajax({
+		url: '/person/findByCreationTimeBefore',
+		type: 'GET',
+		success: function(dtoArr){
+			$.each(dtoArr,function(index,value){
+				showPerson(value);
+			});
+			
+		},
+		error: function(xhr,status){
+			alert("error");
+		}
+	});
+}
+
+function updateClick(){
+	
+	$("div[name='showPersonDiv']").remove();
+	
+	
+	var id = $("#updateIdText").val();
+	var firstName = $("#updateFirstNameText").val();
+	var lastName = $("#updateLastNameText").val();
+		
+	var personData = [];
+	
+	personData.push({
+		id:id,
+		firstName:firstName,
+		lastName:lastName
+	});
+	
+	var jsonPersonData = JSON.stringify(personData);
+	
+	$.ajax({
+		url: '/person/update',
+		contentType: "application/json; charset=UTF-8",
+		type: 'POST',
+		data: jsonPersonData,
+		success: function(dto){
+			showPerson(dto);
+		},
+		error: function(xhr,status){
+			alert("error");
+		}
+	});
+}
+
+function deleteClick(){
+	$("div[name='showPersonDiv']").remove();
+	
+	var id = $("#deleteIdText").val();
+	
+	$.ajax({
+		url: '/person/delete',
+		type: 'GET',
+		data: {
+			id:id
+		},
+		success: function(dto){
+			alert(dto);
+		},
+		error: function(xhr,status){
+			alert("error");
+		}
+	});
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -20,7 +20,7 @@ public interface PersonRepository extends JpaRepository<Person,Long>{
 	public List<Person> findByLastName(String lastName);
 	
 	public List<Person> findByFirstName(String firstName);
-	
+
 	public List<Person> findByLastNameStartingWith(String lastName);
 	
 	public List<Person> findByCreationTimeBefore(Date date);

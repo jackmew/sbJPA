@@ -10,6 +10,7 @@ import java.io.InputStream;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.imageio.ImageIO;
 import javax.servlet.ServletContext;
@@ -21,6 +22,7 @@ import org.jack.sbJpa.service.RepositoryPersonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -48,7 +50,7 @@ public class PersonController {
 	public @ResponseBody String createPerson() throws IOException {
 		
 		String[] fileArr = {"bean_green.jpg","elephant_blue.jpg","rabbit_blue.jpg",
-				"rabbit_red.jpg","smile_raibow.jpg"};
+				"rabbit_red.jpg","smile_rainbow.jpg"};
 		
 		for(String element : fileArr){
 			System.out.println(element);
@@ -91,6 +93,7 @@ public class PersonController {
             person.setFirstName(firstName);
             person.setLastName(lastName);
             person.setImage(image);
+            person.setCreationTime(new Date());
             
             rps.create(person);
             
@@ -109,57 +112,61 @@ public class PersonController {
 	}
 	
 	@RequestMapping("/findOne")
-	public void findOne(@RequestParam(value="id" , required=true)Long id) {
+	public ResponseEntity<Person> findOne(@RequestParam(value="id" , required=true)Long id) {
 		Person person =  rps.findById(id);
-		
-		System.out.println("find one person");
+		return new ResponseEntity<Person>(person,HttpStatus.OK);
 	}
 	
+	/*Query Creation from Method Name*/
+	@RequestMapping("/findByFirstName")
+	public ResponseEntity<List<Person>> findByFirstName(@RequestParam(value="firstName" , required=true)String firstName) {
+		List<Person> persons = rps.findByFirstName(firstName);
+		return new ResponseEntity<List<Person>>(persons,HttpStatus.OK);
+	}
+	
+	@RequestMapping("/findByLastName")
+	public ResponseEntity<List<Person>> findByLastName(@RequestParam(value="lastName" , required=true)String lastName) {
+		List<Person> persons = rps.findByLastName(lastName);
+		return new ResponseEntity<List<Person>>(persons,HttpStatus.OK);
+	}
+	
+	@RequestMapping("/findByLastNameStartingWith")
+	public ResponseEntity<List<Person>> findByLastNameStartingWith(@RequestParam(value="lastName" , required=true)String lastName) {
+		List<Person> persons = rps.findByLastNameStartingWith(lastName);
+		return new ResponseEntity<List<Person>>(persons,HttpStatus.OK);
+	}
+	
+	@RequestMapping("/findByCreationTimeBefore")
+	public ResponseEntity<List<Person>> findByCreationTimeBefore(){
+		List<Person> persons = rps.findByCreationTimeBefore(new Date());
+		return new ResponseEntity<List<Person>>(persons,HttpStatus.OK);
+	}
+
 	@RequestMapping("/update")
-	public void update() throws PersonNotFoundException {
-		Person person = new Person();
-		person.setFirstName("update");
-		person.setLastName("update");
-		person.setId(1L);
+	public ResponseEntity<Person> update(@RequestBody List<Map> personList) throws PersonNotFoundException {
+		
+		String getId = (String) personList.get(0).get("id");
+		Long id = Long.valueOf(getId);
+		String firstName = (String) personList.get(0).get("firstName");
+		String lastName = (String) personList.get(0).get("lastName");
+		
+		Person person = rps.findById(id);
+		person.setFirstName(firstName);
+		person.setLastName(lastName);
+		person.setId(id);
 		
 		rps.update(person);
 		
 		
-		System.out.println("update person");
+		return new ResponseEntity<Person>(person,HttpStatus.OK);
 	}
 	
 	@RequestMapping("/delete")
-	public void delete(@RequestParam(value="id" , required=true)Long id) throws PersonNotFoundException {
+	public @ResponseBody String delete(@RequestParam(value="id" , required=true)Long id) throws PersonNotFoundException {
 		rps.delete(id);
-	}
-	/*Query Creation from Method Name*/
-	@RequestMapping("/findByFirstName")
-	public void findByFirstName(@RequestParam(value="firstName" , required=true)String firstName) {
-		
-		List<Person> persons = rps.findByFirstName(firstName);
-		System.out.println("find person findByFirstName ");
+		return "delete successs";
 	}
 	
-	@RequestMapping("/findByLastName")
-	public void findByLastName(@RequestParam(value="lastName" , required=true)String lastName) {
-		
-		List<Person> persons = rps.findByLastName(lastName);
-		System.out.println("find person findByLastName ");
-	}
-	
-	@RequestMapping("/findByLastNameStartingWith")
-	public void findByLastNameStartingWith(@RequestParam(value="lastName" , required=true)String lastName) {
-		
-		List<Person> persons = rps.findByLastNameStartingWith(lastName);
-		System.out.println("find person findByLastnameLike ");
-	}
-	
-	@RequestMapping("/findByCreationTimeBefore")
-	public void findByCreationTimeBefore(){
-		List<Person> persons = rps.findByCreationTimeBefore(new Date());
-		System.out.println("findByCreationTimeBefore");
-	}
-
 	@RequestMapping(value="/personUpload", method=RequestMethod.POST)
     public @ResponseBody String personUpload(MultipartHttpServletRequest request){
 		
